@@ -508,7 +508,7 @@ def binary():
     return gdb
 
 @LocalContext
-def attach(target, gdbscript = None, exe = None, need_ptrace_scope = True, gdb_args = None, ssh = None, sysroot = None):
+def attach(target, gdbscript = None, exe = None, need_ptrace_scope = True, gdb_args = None, ssh = None, sysroot = None, r2cmd=None):
     """attach(target, gdbscript = None, exe = None, arch = None, ssh = None) -> None
 
     Start GDB in a new terminal and attach to `target`.
@@ -675,6 +675,11 @@ def attach(target, gdbscript = None, exe = None, need_ptrace_scope = True, gdb_a
                                        target.pid,
                                        tmpfile)]
 
+        cmd = "r2 -d {}".format(pid)
+        if r2cmd != None:
+            cmd += " -c '{}'".format(r2cmd)
+
+        print("Command: {}".format(cmd))
         misc.run_in_new_terminal(' '.join(cmd))
         return
 
