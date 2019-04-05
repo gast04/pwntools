@@ -500,10 +500,11 @@ def binary():
             return multiarch
         log.warn_once('Cross-architecture debugging usually requires gdb-multiarch\n' \
                       '$ apt-get install gdb-multiarch')
-
+    '''
     if not gdb:
         log.error('GDB is not installed\n'
                   '$ apt-get install gdb')
+    '''
 
     return gdb
 
@@ -675,11 +676,6 @@ def attach(target, gdbscript = None, exe = None, need_ptrace_scope = True, gdb_a
                                        target.pid,
                                        tmpfile)]
 
-        cmd = "r2 -d {}".format(pid)
-        if r2cmd != None:
-            cmd += " -c '{}'".format(r2cmd)
-
-        print("Command: {}".format(cmd))
         misc.run_in_new_terminal(' '.join(cmd))
         return
 
@@ -734,6 +730,7 @@ def attach(target, gdbscript = None, exe = None, need_ptrace_scope = True, gdb_a
         pre = 'file %s\n%s' % (exe, pre)
 
     cmd = binary()
+    cmd = ""
 
     if gdb_args:
         cmd += ' '
@@ -778,6 +775,10 @@ def attach(target, gdbscript = None, exe = None, need_ptrace_scope = True, gdb_a
         tmp.close()
         cmd += ' -x "%s"' % (tmp.name)
 
+    cmd = "r2 -d {}".format(pid)
+    if r2cmd != None:
+        cmd += " -c '{}'".format(r2cmd)
+    print("Command: {}".format(cmd))
     log.info('running in new terminal: %s' % cmd)
 
     gdb_pid = misc.run_in_new_terminal(cmd)
